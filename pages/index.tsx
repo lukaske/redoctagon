@@ -1,24 +1,37 @@
 import { Button, Group, Container, Box, Badge, Input, Space, Text } from "@mantine/core";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { createPublicClient, http } from 'viem';
-import { mainnet } from 'viem/chains';
-import abi from '../contracts/verifier.abi.json';
 import { useState } from "react";
 import axios from 'axios';
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useEnsName, useReadContract } from 'wagmi'
+
+import { useWriteContract } from 'wagmi'
+import { abi } from '../contracts/abi'
+
+
 
 export default function IndexPage() {
+  const { address } = useAccount()
+  const { data: hash, writeContract } = useWriteContract()
 
   const [conversation, setConversation] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const contractAddress = '0xYourContractAddressHere';
-  
-  const publicClient = createPublicClient({
-    chain: mainnet,
-    transport: http()
-  })
+  const contractAddress = '0x1B5c3f46A28bC690abF55Bb4d29bd6496d060d66';  
+
+  const test = async () => {
+    console.log("TESTING")
+    writeContract({
+      abi: abi,
+      address: contractAddress,
+      functionName: 'verifyResult',
+      args: [
+        
+      ],
+    })
+  }
+
 
 
   async function sendMessage(message:string) {
@@ -36,6 +49,7 @@ export default function IndexPage() {
     <Container fluid>
       <Group mt={50} justify="center">
         <ConnectButton />
+        {address && <Badge color="teal" style={{marginLeft: "20px"}}>Connected via {address}</Badge>}
       </Group>
       <Group style={{display: "flex", flexDirection: "column"}}>
         <h1>REDOctagon</h1>
@@ -62,11 +76,7 @@ export default function IndexPage() {
       </Group>
 
       <Group style={{display: "flex", justifyContent: "center", width: "100%"}} mt={50} mb={200}>
-        <Button onClick={async () => {
-          // const contract = publicClient.contract(abi, contractAddress);
-          // const result = await contract.methods.verify(message).call();
-          // console.log(result);
-        }}>Verify</Button>
+        <Button onClick={test}>Verify</Button>
       </Group>
 
     </Container>
