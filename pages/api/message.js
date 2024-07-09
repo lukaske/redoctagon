@@ -1,5 +1,6 @@
 // pages/api/users.js
 import axios from 'axios';
+import { ethers } from 'ethers';
 
 // let users = [];
 
@@ -21,6 +22,9 @@ async function sendMessage(msg) {
     };
 
     let res = await axios(config);
+
+    let prov = await ethers.providers.JsonRpcProvider('https://polygon-rpc.com', 137);
+    console.log('PROV', prov);
     return res.data;
 }
 
